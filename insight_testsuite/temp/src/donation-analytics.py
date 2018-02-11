@@ -1,3 +1,6 @@
+#Donatiion Analytics Source code
+#Author: Fayaz Rasheed
+
 import pandas as pd
 import math
 import ast
@@ -27,18 +30,8 @@ percentilePvalue=int(percentileP.read())
 open(repeat_donors, 'w').close()
 open(repeat_donors, 'a')
 
-
-
 data['ZIP_CODE_STR']=data.ZIP_CODE.astype(str)
-
-
 data = data[pd.isnull(data['OTHER_ID'])]
-
-
-
-
-
-
 data = data.dropna(subset = ['CMTE_ID'])
 data = data.dropna(subset = ['NAME'])
 data = data.dropna(subset = ['ZIP_CODE'])
@@ -60,29 +53,16 @@ data['TRANSACTION_AMT_STR']=data.TRANSACTION_AMT.astype(str)
 data = data[~data['ZIP_CODE_STR'].str.contains("[a-zA-Z*#@$%^&*!|\/?,.;]").fillna(False)]
 data = data[~data['TRANSACTION_DT_STR'].str.contains("[a-zA-Z*#@$%^&*!|\/?,.;]").fillna(False)]
 data = data[~data['TRANSACTION_AMT_STR'].str.contains("[a-zA-Z*#@$%^&*!|\/?,.;]").fillna(False)]
-
-
 data=data[data['TRANSACTION_DT_STR'].str.len() <= 8]
-
-
 data['TRANSACTION_DT_STR'] = data['TRANSACTION_DT_STR'].str[-4:]
-
-
-
-
 data['NAME_ZIP']=data['NAME']+'_'+data['ZIP_CODE_STR']
-
 mask = data.NAME_ZIP.duplicated(keep=False)
-
-
 new_data=data[mask]
 
 
 import ast
 new_data["TRANSACTION_DT_INT"]= new_data.TRANSACTION_DT_STR.apply(ast.literal_eval)
-
 new_data = new_data[new_data['TRANSACTION_DT_INT'] >= 2015]
-
 max_year_value=new_data['TRANSACTION_DT_INT'].loc[new_data['TRANSACTION_DT_INT'].idxmax()]
 
 
@@ -111,25 +91,15 @@ uniqueCMTE_ID=new_data.CMTE_ID.unique()
 for Recipient in uniqueCMTE_ID:
     new_data=new_dataa
 ###############################################
-
-
     new_data=new_data[new_data['CMTE_ID'].str.contains(Recipient)]
-
     new_data=new_data.sort_values(by=['NAME_ZIP', 'TRANSACTION_AMT'])
 
 
 
 
 #sumofvalues
-
-
     df00 = new_data[new_data['TRANSACTION_DT_INT'] >= max_year_value]
-
-
-
     df00 = df00.groupby(['CMTE_ID', 'NAME_ZIP'])['TRANSACTION_AMT'].sum().reset_index()
-
-
     for i in range(1, len(df00)):
         #print(df00.loc[i-1, 'TRANSACTION_AMT'])
         #print(df00.loc[i, 'TRANSACTION_AMT']+df00.loc[i-1, 'TRANSACTION_AMT'])
@@ -142,35 +112,12 @@ for Recipient in uniqueCMTE_ID:
 #Numberofcontributions
 
     df1 = new_data['NAME_ZIP'].value_counts().rename_axis('NAME_ZIP').reset_index(name='Total no of contributions')
-
-
-
-
-
     f2=new_data.groupby('NAME_ZIP')['TRANSACTION_AMT'].apply(sortandpercentile)
-
-
-
     df0X = new_data[new_data['TRANSACTION_DT_INT'] >= max_year_value]
-
     XX_PERCENTILE_Contrib=pd.DataFrame({'percentile_contribution' : df0X.groupby('CMTE_ID')['TRANSACTION_AMT'].apply(sortandpercentile)}).reset_index()
-
-
-
-
     formerging = new_data[['NAME_ZIP','CMTE_ID']].copy()
-
-
-
     formerging['TRANSACTION_DT_INT'] = new_data.groupby(['NAME_ZIP'])['TRANSACTION_DT_INT'].transform(max)
-
     formerging2 = new_data[['NAME_ZIP','ZIP_CODE']].copy()
-
-
-
-
-
-
 
 
 
@@ -181,17 +128,8 @@ for Recipient in uniqueCMTE_ID:
     merged_df3 = merged_df2.merge(dfx, how = 'outer', on = ['CMTE_ID','NAME_ZIP'])
     merged_df4 = merged_df3.merge(formerging2, how = 'outer', on = ['NAME_ZIP'])
 
-
-
-
-
-
-
     final_towrite=merged_df3.drop_duplicates(subset=['NAME_ZIP'])
     final_towrite
-
-
-
 
     header = ["CMTE_ID", "ZIP_CODE","TRANSACTION_DT_INT", "percentile_contribution", "TRANSACTION_AMT","Total no of contributions"]
     #print(Recipient)
