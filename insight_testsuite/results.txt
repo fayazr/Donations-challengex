@@ -1,5 +1,2 @@
-[Sun Feb 11 13:10:57 EST 2018] 0 of 1 tests passed
-[Sun Feb 11 13:11:49 EST 2018] 0 of 1 tests passed
-[Sun Feb 11 13:26:47 EST 2018] 0 of 1 tests passed
-[Sun Feb 11 13:31:08 EST 2018] 0 of 1 tests passed
-[Sun Feb 11 13:31:30 EST 2018] 0 of 1 tests passed
+[Sun Feb 11 13:50:14 EST 2018] 0 of 1 tests passed
+[Sun Feb 11 13:50:54 EST 2018] 1 of 1 tests passed
