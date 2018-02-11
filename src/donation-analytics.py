@@ -50,6 +50,7 @@ data['ZIP_CODE_STR'] = data["ZIP_CODE_STR"].str[:5]
 data['ZIP_CODE_STR']=data.ZIP_CODE.astype(str)
 data['TRANSACTION_AMT']=data.TRANSACTION_AMT.astype(str).astype(int)
 data['TRANSACTION_DT']=data.TRANSACTION_DT.astype(str).astype(int)
+data['ZIP_CODE']=data.ZIP_CODE_STR.astype(str).astype(int)
 
 
 
@@ -162,7 +163,12 @@ for Recipient in uniqueCMTE_ID:
 
 
     formerging['TRANSACTION_DT_INT'] = new_data.groupby(['NAME_ZIP'])['TRANSACTION_DT_INT'].transform(max)
-    formerging.head()
+
+    formerging2 = new_data[['NAME_ZIP','ZIP_CODE']].copy()
+
+
+
+
 
 
 
@@ -173,8 +179,9 @@ for Recipient in uniqueCMTE_ID:
     merged_df1 = formerging.merge(df1, how = 'inner', on = ['NAME_ZIP'])
     merged_df2 = merged_df1.merge(XX_PERCENTILE_Contrib, how = 'inner', on = ['CMTE_ID'])
     merged_df3 = merged_df2.merge(dfx, how = 'outer', on = ['CMTE_ID','NAME_ZIP'])
+    merged_df4 = merged_df3.merge(formerging2, how = 'outer', on = ['NAME_ZIP'])
 
-    merged_df3
+
 
 
 
@@ -186,6 +193,6 @@ for Recipient in uniqueCMTE_ID:
 
 
 
-    header = ["CMTE_ID", "TRANSACTION_DT_INT", "percentile_contribution", "TRANSACTION_AMT","Total no of contributions"]
-    print(Recipient)
+    header = ["CMTE_ID", "ZIP_CODE","TRANSACTION_DT_INT", "percentile_contribution", "TRANSACTION_AMT","Total no of contributions"]
+    #print(Recipient)
     final_towrite.to_csv(repeat_donors, columns = header,sep='|',mode='a', index=False, header=False)
